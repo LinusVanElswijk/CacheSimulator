@@ -5,6 +5,8 @@ namespace cache_simulation {
 	std::vector<Byte> RamMemory::readBlock(const Address address) {
 		checkAddress(address);
 
+		blockReading.notifyObservers(BlockReadEvent(address, true));
+
 		const auto blockHandle = blockMap_.find(address);
 		if (blockHandle == blockMap_.end()) {
 			return std::vector<Byte>(blockSize());
@@ -15,6 +17,9 @@ namespace cache_simulation {
 
 	void RamMemory::writeBlock(const Address address, const std::vector<Byte> data) {
 		checkData(data);
+
+		blockWriting.notifyObservers(BlockWriteEvent(address, data, true));
+
 		blockMap_.emplace(address, data);
 	}
 

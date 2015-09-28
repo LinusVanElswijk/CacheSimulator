@@ -1,16 +1,21 @@
 #pragma once
 
 #include "TypesAndUtility.h"
+
+#include "observers\Subject.h"
+#include "observers\Observer.h"
+
 #include <vector>
 #include <sstream>
 
 namespace cache_simulation {
-	class MemoryView {
+	class MemoryView 
+	{
 	public:
 		// Constructor/Destructor
-		explicit MemoryView(const int blockSize) : blockSize_(blockSize) {}
+		explicit MemoryView(const int blockSize) : blockSize_(blockSize), blockReading(), blockWriting() {}
 		virtual ~MemoryView() {};
-		
+
 		// What subclasses need to implement
 		virtual std::vector<Byte> readBlock(const Address address) = 0;
 		virtual void writeBlock(const Address address, const std::vector<Byte> data) = 0;
@@ -34,7 +39,28 @@ namespace cache_simulation {
 
 		template<typename T>
 		void write(T* const address, const T value);
-	
+
+		// Events
+		struct BlockReadEvent {
+			BlockReadEvent(const Address address, const bool hit)
+			:address(address), cacheHit(hit) {}
+
+			const Address address;
+			const bool cacheHit;
+		};
+
+		struct BlockWriteEvent {
+			BlockWriteEvent(const Address address, const std::vector<Byte> data, const bool hit)
+			:address(address), cacheHit(hit) {}
+
+			const Address address;
+			const std::vector<Byte> data;
+			const bool cacheHit;
+		};
+
+		observers::Subject<BlockReadEvent> blockReading;
+		observers::Subject<BlockWriteEvent> blockWriting;
+
 	protected:
 		Address offsetBitmask() const { return (blockSize() - 1); }
 		Address blockAddressBitMask() const { return ~offsetBitmask(); }
