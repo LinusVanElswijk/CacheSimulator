@@ -68,6 +68,10 @@ namespace cache_simulation {
 		Address toBlockAddress(const Address address) const { return address & blockAddressBitMask(); }
 
 	private:
+		MemoryView() = delete;
+		MemoryView(const MemoryView& source) = delete;
+		MemoryView& operator=(const MemoryView& source) = delete;
+
 		void checkDataAccessValidity(const Address address, const int byteCount) const;
 
 		const int blockSize_;
