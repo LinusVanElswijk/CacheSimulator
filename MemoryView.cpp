@@ -2,6 +2,25 @@
 
 namespace cache_simulation {
 
+	MemoryView::MemoryView(const int blockSize)
+	: blockSize_(blockSize)
+	, blockReading()
+	, blockWriting() {
+		if (!(isPowerOfTwo(blockSize) && blockSize >= MINIMUM_BLOCK_SIZE)) {
+			throw std::runtime_error("BlockSize should be a power of 2 larger or equal to " + MINIMUM_BLOCK_SIZE);
+		}
+	}
+
+	std::vector<Byte> MemoryView::readBlock(const Address address) {
+		blockReading.notifyObservers(BlockReadEvent(address, contains(address)));
+		return readBlockImplementation(address);
+	}
+
+	void MemoryView::writeBlock(const Address address, const std::vector<Byte> data) {
+		blockWriting.notifyObservers(BlockWriteEvent(address, data, contains(address)));
+		writeBlockImplementation(address, data);
+	}
+
 	std::vector<Byte> MemoryView::readBytes(const Address address, const int nrOfBytes) {
 		checkDataAccessValidity(address, nrOfBytes);
 

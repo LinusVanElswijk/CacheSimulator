@@ -12,19 +12,20 @@ namespace cache_simulation {
 	class MemoryView 
 	{
 	public:
-		// Constructor/Destructor
-		explicit MemoryView(const int blockSize) : blockSize_(blockSize), blockReading(), blockWriting() {}
-		virtual ~MemoryView() {};
+		const static int MINIMUM_BLOCK_SIZE = 4;
 
-		// What subclasses need to implement
-		virtual std::vector<Byte> readBlock(const Address address) = 0;
-		virtual void writeBlock(const Address address, const std::vector<Byte> data) = 0;
-		virtual bool contains(const Address address) const = 0;
+		// Constructor/Destructor
+		explicit MemoryView(const int blockSize);
+		virtual ~MemoryView() {};
 
 		// Accessors	
 		int blockSize() const { return blockSize_; }
+		virtual bool contains(const Address address) const = 0;
 
 		// Read write operations
+		std::vector<Byte> readBlock(const Address address);
+		void writeBlock(const Address address, const std::vector<Byte> data);
+
 		std::vector<Byte> readBytes(const Address address, const int nrOfBytes);
 		void writeBytes(const Address address, const std::vector<Byte> data);
 
@@ -62,16 +63,15 @@ namespace cache_simulation {
 		observers::Subject<BlockWriteEvent> blockWriting;
 
 	protected:
+		virtual std::vector<Byte> readBlockImplementation(const Address address) = 0;
+		virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data) = 0;
+
 		Address offsetBitmask() const { return (blockSize() - 1); }
 		Address blockAddressBitMask() const { return ~offsetBitmask(); }
 		Address toOffsetInBlock(const Address address) const { return address & offsetBitmask(); }
 		Address toBlockAddress(const Address address) const { return address & blockAddressBitMask(); }
 
 	private:
-		MemoryView() = delete;
-		MemoryView(const MemoryView& source) = delete;
-		MemoryView& operator=(const MemoryView& source) = delete;
-
 		void checkDataAccessValidity(const Address address, const int byteCount) const;
 
 		const int blockSize_;

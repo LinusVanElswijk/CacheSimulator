@@ -1,4 +1,32 @@
 #pragma once
+
+#include "MemoryCache.h"
+#include "CacheLine.h"
+#include <algorithm>
+
+namespace cache_simulation {
+	class CacheLine;
+
+	class CacheLineSet: public MemoryCache {
+	public:
+		CacheLineSet(const int setSize, const int blockSize, MemoryView& upstream) : MemoryCache(blockSize, upstream) {}
+		virtual ~CacheLineSet() {}
+
+		int size() const {
+			return cacheLines_.size();
+		}
+
+		virtual bool contains(const Address address) const;
+
+	protected:
+		virtual std::vector<Byte> readBlockImplementation(const Address address) = 0;
+		virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data) = 0;
+
+	private:
+		std::vector<CacheLine> cacheLines_;
+	};
+}
+
 /* OBSOLETE
 #include "TypesAndUtility.h"
 #include "CacheLine.h"

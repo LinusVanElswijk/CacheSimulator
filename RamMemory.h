@@ -13,9 +13,11 @@ namespace cache_simulation {
 		explicit RamMemory(const int blockSize) : MemoryView(blockSize) {}
 		virtual ~RamMemory() {};
 
-		virtual std::vector<Byte> readBlock(const Address address);
-		virtual void writeBlock(const Address address, const std::vector<Byte> data);
 		virtual bool contains(const Address address) const { return true; }
+
+	protected:
+		virtual std::vector<Byte> readBlockImplementation(const Address address);
+		virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data);
 
 	private:
 		void checkAddress(const Address address) const;

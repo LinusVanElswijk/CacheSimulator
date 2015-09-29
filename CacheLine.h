@@ -1,4 +1,37 @@
 #pragma once 
+
+#include "MemoryView.h"
+
+namespace cache_simulation {
+
+	struct CacheLine : public MemoryView {
+	public:
+		CacheLine(const int blockSize) : MemoryView(blockSize), addressAndValidity_(0), data_(blockSize) {}
+		virtual ~CacheLine() {}
+
+		virtual bool contains(const Address address) const { return blockAddress() == address && isValid(); }
+
+		bool isDirty() const { return (addressAndValidity_ & DIRTY_FLAG_BITMASK) != 0; }
+		bool isValid() const { return (addressAndValidity_ & VALID_FLAG_BITMASK) != 0; }
+		Address blockAddress() const { return toBlockAddress(addressAndValidity_); }
+
+	protected:
+		virtual std::vector<Byte> readBlockImplementation(const Address address);
+		virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data);
+
+	private:
+		const static Address VALID_FLAG_BITMASK = 1 << 0;
+		const static Address DIRTY_FLAG_BITMASK = 1 << 1;
+
+		void setDirty(const bool dirty);
+		void setValid(const bool valid);
+		void setBlockAddress(const Address address);
+
+		Address addressAndValidity_;
+		std::vector<Byte> data_;
+	};
+}
+
 /* OBSOLETE
 #include "TypesAndUtility.h"
 #include "MemoryInterface.h"
