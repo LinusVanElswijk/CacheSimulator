@@ -31,7 +31,7 @@ namespace cache_simulation {
 
 	private:
 		Address associatedSetBitMask() const;
-		int toAssociatedSet(Address address) const { return address & associatedSetBitMask(); }
+		int toAssociatedSet(Address address) const { return (address & associatedSetBitMask()) / blockSize(); }
 		
 		NWayAssociativeCache() = delete;
 		std::vector<CacheLineSet> sets_;

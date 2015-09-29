@@ -19,13 +19,18 @@ namespace cache_simulation {
 	}
 
 	bool CacheLineSet::contains(const Address address) const {
-		return find(address) != cacheLines_.end();
+		return find(toBlockAddress(address)) != cacheLines_.end();
 	}
 
 	std::vector<Byte> CacheLineSet::readBlockImplementation(const Address address) {
+		static long long misses = 0;
+		static long long hits = 0;
+		static long long counter = 0;
+
 		CacheLineIterator cacheLineI = find(address);
 
 		if (cacheLineI == cacheLines_.end()) {
+			misses++;
 			// miss
 			cacheLineI = selectCachelineToEvict();
 			cacheLineEviction_.notifyObservers(cacheLineI->blockAddress(), address);
@@ -34,9 +39,17 @@ namespace cache_simulation {
 				upstream_.writeBlock(cacheLineI->blockAddress(), cacheLineI->data());
 			}
 
+			cacheLineI->setBlockAddress(address);
 			cacheLineI->setData(upstream_.readBlock(address));
 			cacheLineI->setValid(true);
 			cacheLineI->setDirty(false);
+		}
+		else {
+			hits++;
+		}
+		counter++;
+		if (counter > 1000) {
+			counter = 0;
 		}
 
 		return cacheLineI->data();

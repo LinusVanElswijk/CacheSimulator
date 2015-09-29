@@ -6,7 +6,11 @@ namespace cache_simulation {
 
 	class MemoryCache : public MemoryView {
 	public:
-		explicit MemoryCache(const int blockSize, MemoryView& upstream) : MemoryView(blockSize), upstream_(upstream) {}
+		explicit MemoryCache(const int blockSize, MemoryView& upstream) : MemoryView(blockSize), upstream_(upstream) {
+			if (upstream_.blockSize() != blockSize) {
+				throw std::runtime_error("Upstream blocksize mismatch.");
+			}
+		}
 		virtual ~MemoryCache() {};
 		
 	protected:

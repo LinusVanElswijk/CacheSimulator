@@ -22,10 +22,21 @@ namespace eviction_policies {
 
 		virtual ~EvictionPolicy() {};
 
-		Address select(std::vector<Address> candidates) {
-			auto compareFunction = [this](const Address left, const Address right){ return this->compare(left, right); };
-			std::sort(candidates.begin(), candidates.end(), compareFunction);
-			return candidates.front();
+		virtual Address select(std::vector<Address> candidates) {
+			Address best = candidates.front();
+			
+			for (auto it = candidates.begin()++; it != candidates.end(); it++) {
+				best = compare(best, *it) ? best : *it;
+			}
+
+			return best;
+			/*
+			const auto best = std::min_element(begin(candidates), end(candidates), [this](const Address left, const Address right) {
+				return this->compare(left, right);
+			});
+			
+			return *best;
+			*/
 		}
 		
 		virtual bool compare(const Address left, const Address right) = 0;
@@ -35,6 +46,10 @@ namespace eviction_policies {
 	public:
 		virtual void onEvent(const MemoryView::BlockReadEvent& readEvent) { }
 		virtual void onEvent(const MemoryView::BlockWriteEvent& writeEvent) { }
+
+		virtual Address select(std::vector<Address> candidates) {
+			return candidates[std::rand() % candidates.size()];
+		}
 
 		virtual bool compare(const Address left, const Address right) {
 			return (std::rand() % 2) == 0;
