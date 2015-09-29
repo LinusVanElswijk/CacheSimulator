@@ -26,7 +26,12 @@ namespace cache_simulation {
 		virtual bool contains(const Address address) const { return sets_[toAssociatedSet(address)].contains(address); }
 
 	protected:
-		virtual std::vector<Byte> readBlockImplementation(const Address address) { return sets_[toAssociatedSet(address)].readBlock(address); }
+		virtual std::vector<Byte> readBlockImplementation(const Address address) { 
+			const int offsetBM = offsetBitmask();
+			const int assosetBM = associatedSetBitMask();
+			const int assoAddress = toAssociatedSet(address);
+			return sets_[toAssociatedSet(address)].readBlock(address);
+		}
 		virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data) { sets_[toAssociatedSet(address)].writeBlock(address, data); }
 
 	private:

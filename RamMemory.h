@@ -20,8 +20,11 @@ namespace cache_simulation {
 		virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data);
 
 	private:
+		typedef std::unordered_map<Address, std::vector<Byte>>::iterator BlockHandle;
+
 		void checkAddress(const Address address) const;
 		void checkData(const std::vector<Byte> data) const;
+		BlockHandle blockHandle(const Address address);
 
 		std::unordered_map<Address, std::vector<Byte>> blockMap_;
 	};

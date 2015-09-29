@@ -54,7 +54,19 @@ namespace cache_simulation {
 				block[i + offset] = data[i];
 			}
 
+			if (offset != 0) {
+				int x = 4;
+			}
+
 			writeBlock(blockAddress, block);
+			auto block2 = readBlock(blockAddress);
+
+			for (int i = 0; i < block2.size(); i++) {
+				if (block2[i] != block[i]) {
+					int x = 5;
+				}
+
+			}
 		}
 	}
 

@@ -4,18 +4,14 @@ namespace cache_simulation {
 
 	std::vector<Byte> RamMemory::readBlockImplementation(const Address address) {
 		checkAddress(address);
-
-		const auto blockHandle = blockMap_.find(address);
-		if (blockHandle == blockMap_.end()) {
-			return std::vector<Byte>(blockSize());
-		}
-
-		return blockHandle->second;
+		return blockHandle(address)->second;
 	}
 
 	void RamMemory::writeBlockImplementation(const Address address, const std::vector<Byte> data) {
+		checkAddress(address);
 		checkData(data);
-		blockMap_.emplace(address, data);
+
+		blockHandle(address)->second = data;
 	}
 
 	void RamMemory::checkAddress(const Address address) const {
@@ -34,5 +30,15 @@ namespace cache_simulation {
 			message << "Data size (" << data.size() << ") is not equal to the block size (" << blockSize() << ")." << std::ends;
 			throw new std::runtime_error(message.str());
 		}
+	}
+
+	RamMemory::BlockHandle RamMemory::blockHandle(const Address address) {
+		auto blockHandle = blockMap_.find(address);
+		if (blockHandle == blockMap_.end()) {
+			std::pair<Address, std::vector<Byte>> newPair(address, std::vector<Byte>(blockSize()));
+			blockHandle = blockMap_.insert(newPair).first;
+		}
+
+		return blockHandle;
 	}
 }
