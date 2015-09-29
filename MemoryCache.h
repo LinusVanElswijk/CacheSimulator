@@ -13,8 +13,8 @@ namespace cache_simulation {
 		MemoryView& upstream_;
 
 	private:
-		MemoryCache() = delete;
-		MemoryCache(const MemoryCache& source) = delete;
-		MemoryCache& operator=(const MemoryCache& source) = delete;
+		//MemoryCache() = delete;
+		//MemoryCache(const MemoryCache& source) = delete;
+		//MemoryCache& operator=(const MemoryCache& source) = delete;
 	};
 }

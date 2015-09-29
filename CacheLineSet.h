@@ -1,5 +1,6 @@
 #pragma once
 
+#include "TypesAndUtility.h"
 #include "MemoryCache.h"
 #include "CacheLine.h"
 #include "observing/Subject.h"
@@ -9,13 +10,12 @@
 #include <memory>
 
 namespace cache_simulation {
-	struct CacheLine;
 
 	class CacheLineSet : public MemoryCache {
 	public:
 		CacheLineSet(const int setSize, 
 					 const int blockSize, 
-					 std::unique_ptr<eviction_policies::EvictionPolicy> policy,
+					 const eviction_policies::EvictionPolicyType policy,
 					 MemoryView& upstream
 		);
 
@@ -42,7 +42,7 @@ namespace cache_simulation {
 		virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data);
 
 	private:
-		std::unique_ptr<eviction_policies::EvictionPolicy> evictionPolicy_;
+		std::shared_ptr<eviction_policies::EvictionPolicy> evictionPolicy_;
 		std::vector<CacheLine> cacheLines_;
 		observing::NotifiableSubject<CacheLineEvictionEvent> cacheLineEviction_;
 

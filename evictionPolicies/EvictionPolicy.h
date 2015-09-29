@@ -7,6 +7,9 @@
 namespace cache_simulation {
 namespace eviction_policies {
 
+	enum class EvictionPolicyType {
+		RANDOM
+	};
 
 	class EvictionPolicy
 	: public observing::Observer<MemoryView::BlockWriteEvent>
@@ -25,8 +28,17 @@ namespace eviction_policies {
 			return candidates.front();
 		}
 		
-		virtual bool compare(const Address left, const Address right);
+		virtual bool compare(const Address left, const Address right) = 0;
 	};
 
+	class RandomEviction : public EvictionPolicy {
+	public:
+		virtual void onEvent(const MemoryView::BlockReadEvent& readEvent) { }
+		virtual void onEvent(const MemoryView::BlockWriteEvent& writeEvent) { }
+
+		virtual bool compare(const Address left, const Address right) {
+			return (std::rand() % 2) == 0;
+		}
+	};
 }}
 

@@ -3,12 +3,12 @@
 namespace cache_simulation {
 
 	CacheLineSet::CacheLineSet(const int setSize, 
-							   const int blockSize, 
-							   std::unique_ptr<eviction_policies::EvictionPolicy> policy,
+							   const int blockSize,
+							   const eviction_policies::EvictionPolicyType policy,
 							   MemoryView& upstream
 							  )
 	: MemoryCache(blockSize, upstream)
-	, evictionPolicy_(std::move(policy))
+	, evictionPolicy_(new eviction_policies::RandomEviction)
 	, cacheLines_()
 	, cacheLineEviction_()
 	{

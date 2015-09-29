@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 
 namespace cache_simulation {
 	typedef std::uintptr_t Address;
