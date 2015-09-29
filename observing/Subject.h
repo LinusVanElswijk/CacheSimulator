@@ -5,7 +5,7 @@
 #include <memory>
 
 namespace cache_simulation {
-namespace observers {
+namespace observing {
 
 	template<typename E>
 	class Subject {
@@ -14,6 +14,7 @@ namespace observers {
 
 	public:
 		Subject() : observers_() {}
+		virtual ~Subject() {};
 
 		void attach(std::shared_ptr<Observer> observer) {
 			detach(observer);
@@ -28,22 +29,7 @@ namespace observers {
 			);
 		}
 
-		void notifyObservers(const E& e) {
-			for (auto it = observers_.begin(); it != observers_.end(); it++) {
-				auto observer = it->lock();
-				if (observer) {
-					observer->onEvent(e);
-				}
-				else {
-					observers_.erase(it);
-				}
-			}
-		}
-
-	private:
-		Subject(const Subject& source) = delete;
-		Subject& operator= (const Subject& source) = delete;
-
+	protected:
 		std::list< std::weak_ptr<Observer> > observers_;
 	};
 

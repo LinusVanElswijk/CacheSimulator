@@ -6,7 +6,7 @@ namespace cache_simulation {
 
 	struct CacheLine : public MemoryView {
 	public:
-		CacheLine(const int blockSize) : MemoryView(blockSize), addressAndValidity_(0), data_(blockSize) {}
+		explicit CacheLine(const int blockSize) : MemoryView(blockSize), addressAndValidity_(0), data_(blockSize) {}
 		virtual ~CacheLine() {}
 
 		virtual bool contains(const Address address) const { return blockAddress() == address && isValid(); }
@@ -14,6 +14,12 @@ namespace cache_simulation {
 		bool isDirty() const { return (addressAndValidity_ & DIRTY_FLAG_BITMASK) != 0; }
 		bool isValid() const { return (addressAndValidity_ & VALID_FLAG_BITMASK) != 0; }
 		Address blockAddress() const { return toBlockAddress(addressAndValidity_); }
+		std::vector<Byte> data() { return readBlock(blockAddress()); }
+
+		void setDirty(const bool dirty);
+		void setValid(const bool valid);
+		void setBlockAddress(const Address address);
+		void setData(const std::vector<Byte> data) { writeBlock(blockAddress(), data); }
 
 	protected:
 		virtual std::vector<Byte> readBlockImplementation(const Address address);
@@ -22,10 +28,6 @@ namespace cache_simulation {
 	private:
 		const static Address VALID_FLAG_BITMASK = 1 << 0;
 		const static Address DIRTY_FLAG_BITMASK = 1 << 1;
-
-		void setDirty(const bool dirty);
-		void setValid(const bool valid);
-		void setBlockAddress(const Address address);
 
 		Address addressAndValidity_;
 		std::vector<Byte> data_;

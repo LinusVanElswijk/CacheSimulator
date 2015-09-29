@@ -2,14 +2,23 @@
 
 #include "MemoryCache.h"
 #include "CacheLine.h"
+#include "observing/Subject.h"
+#include "observing/NotifiableSubject.h"
+#include "evictionPolicies/EvictionPolicy.h"
 #include <algorithm>
+#include <memory>
 
 namespace cache_simulation {
-	class CacheLine;
+	struct CacheLine;
 
-	class CacheLineSet: public MemoryCache {
+	class CacheLineSet : public MemoryCache {
 	public:
-		CacheLineSet(const int setSize, const int blockSize, MemoryView& upstream) : MemoryCache(blockSize, upstream) {}
+		CacheLineSet(const int setSize, 
+					 const int blockSize, 
+					 std::unique_ptr<eviction_policies::EvictionPolicy> policy,
+					 MemoryView& upstream
+		);
+
 		virtual ~CacheLineSet() {}
 
 		int size() const {
@@ -18,12 +27,32 @@ namespace cache_simulation {
 
 		virtual bool contains(const Address address) const;
 
+		struct CacheLineEvictionEvent {
+			explicit CacheLineEvictionEvent(Address evicted, Address admitted)
+			: evictedAddress(evicted), admittedAddress(admitted) {}
+
+			const Address evictedAddress;
+			const Address admittedAddress;
+		};
+
+		observing::Subject<CacheLineEvictionEvent>& cacheLineEviction() { return cacheLineEviction_; }
+
 	protected:
-		virtual std::vector<Byte> readBlockImplementation(const Address address) = 0;
-		virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data) = 0;
+		virtual std::vector<Byte> readBlockImplementation(const Address address);
+		virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data);
 
 	private:
+		std::unique_ptr<eviction_policies::EvictionPolicy> evictionPolicy_;
 		std::vector<CacheLine> cacheLines_;
+		observing::NotifiableSubject<CacheLineEvictionEvent> cacheLineEviction_;
+
+		typedef std::vector<CacheLine>::iterator CacheLineIterator;
+		typedef std::vector<CacheLine>::const_iterator ConstCacheLineIterator;
+
+		CacheLineIterator selectCachelineToEvict();
+		CacheLineIterator find(const Address address);
+		ConstCacheLineIterator find(const Address address) const;
+		CacheLineIterator findInvalid();
 	};
 }
 

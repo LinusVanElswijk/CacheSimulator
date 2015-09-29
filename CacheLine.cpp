@@ -1,21 +1,26 @@
 #include "CacheLine.h"
 
 namespace cache_simulation {
-	/*
+
 	std::vector<Byte> CacheLine::readBlockImplementation(const Address address) {
-		if (address != tag()) {
-			throw std::runtime_error("Tag and address don't match");
+		if (address != blockAddress()) {
+			throw std::runtime_error("Address doesn't match block address");
 		}
+
+		return data_;
 	}
 
 	void CacheLine::writeBlockImplementation(const Address address, const std::vector<Byte> data) {
-		if (address != tag()) {
-			throw std::runtime_error("Tag and address don't match");
+		if (address != blockAddress()) {
+			throw std::runtime_error("Address doesn't match block address");
 		}
 
-		setDirty(true);
-		setValid(true);
-	}*/
+		if (data.size() != blockSize()) {
+			throw std::runtime_error("Data size doesn't match block size");
+		}
+
+		data_ = data;
+	}
 
 	void CacheLine::setDirty(const bool dirty) {
 		addressAndValidity_ = dirty ?

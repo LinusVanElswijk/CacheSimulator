@@ -2,8 +2,9 @@
 
 #include "TypesAndUtility.h"
 
-#include "observers\Subject.h"
-#include "observers\Observer.h"
+#include "observing/Subject.h"
+#include "observing/NotifiableSubject.h"
+#include "observing/Observer.h"
 
 #include <vector>
 #include <sstream>
@@ -59,8 +60,8 @@ namespace cache_simulation {
 			const bool cacheHit;
 		};
 
-		observers::Subject<BlockReadEvent> blockReading;
-		observers::Subject<BlockWriteEvent> blockWriting;
+		observing::Subject<BlockReadEvent>& blockReading() { return blockReading_; }
+		observing::Subject<BlockWriteEvent>& blockWriting() { return blockWriting_; }
 
 	protected:
 		virtual std::vector<Byte> readBlockImplementation(const Address address) = 0;
@@ -75,6 +76,8 @@ namespace cache_simulation {
 		void checkDataAccessValidity(const Address address, const int byteCount) const;
 
 		const int blockSize_;
+		observing::NotifiableSubject<BlockReadEvent> blockReading_;
+		observing::NotifiableSubject<BlockWriteEvent> blockWriting_;
 	};
 
 	// implementation of template functions
