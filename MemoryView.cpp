@@ -16,7 +16,7 @@ namespace cache_simulation {
 		return readBlockImplementation(address);
 	}
 
-	void MemoryView::writeBlock(const Address address, const std::vector<Byte> data) {
+	void MemoryView::writeBlock(const Address address, const std::vector<Byte>& data) {
 		blockWriting_.notifyObservers(address, data, contains(address));
 		writeBlockImplementation(address, data);
 	}

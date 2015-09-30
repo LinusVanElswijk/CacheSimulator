@@ -10,7 +10,7 @@
 #include <memory>
 
 namespace cache_simulation {
-
+	
 	class CacheLineSet : public MemoryCache {
 	public:
 		CacheLineSet(const int setSize, 
@@ -27,19 +27,11 @@ namespace cache_simulation {
 
 		virtual bool contains(const Address address) const;
 
-		struct CacheLineEvictionEvent {
-			explicit CacheLineEvictionEvent(Address evicted, Address admitted)
-			: evictedAddress(evicted), admittedAddress(admitted) {}
-
-			const Address evictedAddress;
-			const Address admittedAddress;
-		};
-
 		observing::Subject<CacheLineEvictionEvent>& cacheLineEviction() { return cacheLineEviction_; }
 
 	protected:
 		virtual std::vector<Byte> readBlockImplementation(const Address address);
-		virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data);
+		virtual void writeBlockImplementation(const Address address, const std::vector<Byte>& data);
 
 	private:
 		std::shared_ptr<eviction_policies::EvictionPolicy> evictionPolicy_;

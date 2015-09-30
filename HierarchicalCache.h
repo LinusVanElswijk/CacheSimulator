@@ -54,7 +54,7 @@ namespace cache_simulation {
 				return level(1).readBlock(address);
 			}
 
-			virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data) {
+			virtual void writeBlockImplementation(const Address address, const std::vector<Byte>& data) {
 				level(1).writeBlock(address, data);
 			}
 			

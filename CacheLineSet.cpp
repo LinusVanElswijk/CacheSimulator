@@ -8,7 +8,7 @@ namespace cache_simulation {
 							   MemoryView& upstream
 							  )
 	: MemoryCache(blockSize, upstream)
-	, evictionPolicy_(new eviction_policies::RandomEviction)
+	, evictionPolicy_(eviction_policies::instantiate(policy))
 	, cacheLines_()
 	, cacheLineEviction_()
 	{
@@ -16,6 +16,10 @@ namespace cache_simulation {
 		for (int i = 0; i < setSize; i++) {
 			cacheLines_.emplace_back(CacheLine(blockSize));
 		}
+
+		blockReading().attach(evictionPolicy_);
+		blockWriting().attach(evictionPolicy_);
+		cacheLineEviction().attach(evictionPolicy_);
 	}
 
 	bool CacheLineSet::contains(const Address address) const {
@@ -42,7 +46,7 @@ namespace cache_simulation {
 		return cacheLineI->data();
 	};
 
-	void CacheLineSet::writeBlockImplementation(const Address address, const std::vector<Byte> data) {
+	void CacheLineSet::writeBlockImplementation(const Address address, const std::vector<Byte>& data) {
 		CacheLineIterator cacheLineI = find(address);
 
 		if (cacheLineI == cacheLines_.end()) {

@@ -5,6 +5,7 @@
 #include "observing/Subject.h"
 #include "observing/NotifiableSubject.h"
 #include "observing/Observer.h"
+#include "Events.h"
 
 #include <vector>
 #include <sstream>
@@ -25,7 +26,7 @@ namespace cache_simulation {
 
 		// Read write operations
 		std::vector<Byte> readBlock(const Address address);
-		void writeBlock(const Address address, const std::vector<Byte> data);
+		void writeBlock(const Address address, const std::vector<Byte>& data);
 
 		std::vector<Byte> readBytes(const Address address, const int nrOfBytes);
 		void writeBytes(const Address address, const std::vector<Byte> data);
@@ -42,30 +43,12 @@ namespace cache_simulation {
 		template<typename T>
 		void write(T* const address, const T value);
 
-		// Events
-		struct BlockReadEvent {
-			BlockReadEvent(const Address address, const bool hit)
-			:address(address), cacheHit(hit) {}
-
-			const Address address;
-			const bool cacheHit;
-		};
-
-		struct BlockWriteEvent {
-			BlockWriteEvent(const Address address, const std::vector<Byte> data, const bool hit)
-			:address(address), cacheHit(hit) {}
-
-			const Address address;
-			const std::vector<Byte> data;
-			const bool cacheHit;
-		};
-
 		observing::Subject<BlockReadEvent>& blockReading() { return blockReading_; }
 		observing::Subject<BlockWriteEvent>& blockWriting() { return blockWriting_; }
 
 	protected:
 		virtual std::vector<Byte> readBlockImplementation(const Address address) = 0;
-		virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data) = 0;
+		virtual void writeBlockImplementation(const Address address, const std::vector<Byte>& data) = 0;
 
 		Address offsetBitmask() const { return (blockSize() - 1); }
 		Address blockAddressBitMask() const { return ~offsetBitmask(); }

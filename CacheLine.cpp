@@ -10,7 +10,7 @@ namespace cache_simulation {
 		return data_;
 	}
 
-	void CacheLine::writeBlockImplementation(const Address address, const std::vector<Byte> data) {
+	void CacheLine::writeBlockImplementation(const Address address, const std::vector<Byte>& data) {
 		if (address != blockAddress()) {
 			throw std::runtime_error("Address doesn't match block address");
 		}

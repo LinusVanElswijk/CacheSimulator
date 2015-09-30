@@ -17,7 +17,7 @@ namespace cache_simulation {
 
 	protected:
 		virtual std::vector<Byte> readBlockImplementation(const Address address);
-		virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data);
+		virtual void writeBlockImplementation(const Address address, const std::vector<Byte>& data);
 
 	private:
 		typedef std::unordered_map<Address, std::vector<Byte>>::iterator BlockHandle;

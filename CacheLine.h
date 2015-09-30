@@ -23,7 +23,7 @@ namespace cache_simulation {
 
 	protected:
 		virtual std::vector<Byte> readBlockImplementation(const Address address);
-		virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data);
+		virtual void writeBlockImplementation(const Address address, const std::vector<Byte>& data);
 
 	private:
 		const static Address VALID_FLAG_BITMASK = 1 << 0;

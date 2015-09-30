@@ -7,7 +7,7 @@ namespace cache_simulation {
 		return blockHandle(address)->second;
 	}
 
-	void RamMemory::writeBlockImplementation(const Address address, const std::vector<Byte> data) {
+	void RamMemory::writeBlockImplementation(const Address address, const std::vector<Byte>& data) {
 		checkAddress(address);
 		checkData(data);
 

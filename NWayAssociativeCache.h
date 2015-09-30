@@ -32,7 +32,7 @@ namespace cache_simulation {
 			const int assoAddress = toAssociatedSet(address);
 			return sets_[toAssociatedSet(address)].readBlock(address);
 		}
-		virtual void writeBlockImplementation(const Address address, const std::vector<Byte> data) { sets_[toAssociatedSet(address)].writeBlock(address, data); }
+		virtual void writeBlockImplementation(const Address address, const std::vector<Byte>& data) { sets_[toAssociatedSet(address)].writeBlock(address, data); }
 
 	private:
 		Address associatedSetBitMask() const;
